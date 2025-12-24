@@ -224,7 +224,13 @@ async function handleSourceChanged(change: boolean, modal: "add-text" | "edit" |
     deleteModalOpen.value = false;
   }
 
-  if (change) await refresh();
+  if (change) {
+    if (isFilter.value) {
+      isFilter.value = false;
+      filteredSources.value = [];
+    }
+    await refresh();
+  }
 }
 
 async function handleGetSourceDetail(sourceId: number, modal: "detail" | "edit" | "delete") {

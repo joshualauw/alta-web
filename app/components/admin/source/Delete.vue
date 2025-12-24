@@ -32,14 +32,16 @@ const emits = defineEmits<{
 const { deleteSource } = useSourceStore();
 const { execute, success, message, loading } = useApiRef(deleteSource);
 
-async function handleDeleteSource(sourceId: number) {
-  await execute(sourceId);
+async function handleDeleteSource() {
+  if (props.source) {
+    await execute(props.source.id);
 
-  if (success.value) {
-    toast.success(message.value);
-    emits("close", true);
-  } else {
-    toast.error(message.value);
+    if (success.value) {
+      toast.success(message.value);
+      emits("close", true);
+    } else {
+      toast.error(message.value);
+    }
   }
 }
 </script>

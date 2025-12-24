@@ -16,10 +16,29 @@
         <VButton variant="outline" size="icon" @click="refresh" :disabled="pending" title="Refresh sources">
           <RefreshCcw :class="['h-4 w-4', pending ? 'animate-spin' : '']" />
         </VButton>
-        <VButton class="bg-primary text-primary-foreground">
-          <Plus class="h-4 w-4" />
-          Add Source
-        </VButton>
+
+        <VDropdownMenu>
+          <VDropdownMenuTrigger as-child>
+            <VButton class="bg-primary text-primary-foreground">
+              <Plus class="h-4 w-4" />
+              Add Source
+            </VButton>
+          </VDropdownMenuTrigger>
+          <VDropdownMenuContent>
+            <VDropdownMenuItem @click="addTextModalOpen = true">
+              <FileText class="size-3.5" />
+              Add from text
+            </VDropdownMenuItem>
+            <VDropdownMenuItem disabled>
+              <FileUp class="size-3.5" />
+              Upload File (soon)
+            </VDropdownMenuItem>
+            <VDropdownMenuItem disabled>
+              <LayersPlus class="size-3.5" />
+              Bulk Create (soon)
+            </VDropdownMenuItem>
+          </VDropdownMenuContent>
+        </VDropdownMenu>
       </div>
     </div>
 
@@ -27,28 +46,36 @@
       v-if="isFilter && filteredSources.length == 0"
       class="flex min-h-100 flex-col items-center justify-center rounded-md border border-dashed p-8 text-center animate-in fade-in zoom-in duration-300"
     >
-      <div class="flex h-20 w-20 items-center justify-center rounded-full bg-ghost">
-        <Frown class="h-10 w-10 text-muted-foreground" />
-      </div>
-      <h3 class="text-lg font-semibold">Could not find sources</h3>
-      <p class="mb-6 mt-2 text-sm text-muted-foreground max-w-xs mx-auto">Esnure your filter is correct</p>
+      <VEmpty>
+        <VEmptyHeader>
+          <VEmptyMedia variant="icon">
+            <FileQuestion class="h-10 w-10 text-muted-foreground" />
+          </VEmptyMedia>
+          <VEmptyTitle>Sources not Found</VEmptyTitle>
+          <VEmptyDescription> Ensure your filter is correct </VEmptyDescription>
+        </VEmptyHeader>
+      </VEmpty>
     </div>
 
     <div
       v-if="(sources?.data?.items ?? []).length === 0"
       class="flex min-h-100 flex-col items-center justify-center rounded-md border border-dashed p-8 text-center animate-in fade-in zoom-in duration-300"
     >
-      <div class="flex h-20 w-20 items-center justify-center rounded-full bg-secondary">
-        <FileText class="h-10 w-10 text-muted-foreground" />
-      </div>
-      <h3 class="mt-4 text-lg font-semibold">No sources found</h3>
-      <p class="mb-6 mt-2 text-sm text-muted-foreground max-w-xs mx-auto">
-        You haven't added any documents to your knowledge base yet
-      </p>
-      <VButton variant="outline" class="gap-2">
-        <Plus class="h-4 w-4" />
-        Add your first source
-      </VButton>
+      <VEmpty>
+        <VEmptyHeader>
+          <VEmptyMedia variant="icon">
+            <FileText class="h-10 w-10 text-muted-foreground" />
+          </VEmptyMedia>
+          <VEmptyTitle>No Sources</VEmptyTitle>
+          <VEmptyDescription> You haven't added any documents to your knowledge base yet </VEmptyDescription>
+        </VEmptyHeader>
+        <VEmptyContent>
+          <VButton class="gap-2">
+            <Plus class="h-4 w-4" />
+            Add your first source
+          </VButton>
+        </VEmptyContent>
+      </VEmpty>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -135,13 +162,25 @@
     </div>
 
     <AdminSourceDetail @close="detailModalOpen = false" :open="detailModalOpen" :source="sourceDetail" />
-    <AdminSourceEdit @close="handleUpdateSource" :open="editModalOpen" :source="sourceDetail" />
-    <AdminSourceDelete @close="handleDeleteSource" :open="deleteModalOpen" :source="sourceDetail" />
+    <AdminSourceAddText @close="handleSourceChanged($event, 'add-text')" :open="addTextModalOpen" />
+    <AdminSourceEdit @close="handleSourceChanged($event, 'edit')" :open="editModalOpen" :source="sourceDetail" />
+    <AdminSourceDelete @close="handleSourceChanged($event, 'delete')" :open="deleteModalOpen" :source="sourceDetail" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { Edit, Eye, FileText, Frown, MoreHorizontal, Plus, RefreshCcw, Trash2 } from "lucide-vue-next";
+import {
+  Edit,
+  Eye,
+  FileText,
+  FileQuestion,
+  MoreHorizontal,
+  Plus,
+  RefreshCcw,
+  Trash2,
+  LayersPlus,
+  FileUp,
+} from "lucide-vue-next";
 import { RouteKey } from "~/const/RouteKey";
 import { cn } from "~/lib/utils";
 import type { GetSourceDetailResponse } from "~/types/source/GetSourceDetail";
@@ -157,6 +196,7 @@ definePageMeta({
 const detailModalOpen = ref(false);
 const editModalOpen = ref(false);
 const deleteModalOpen = ref(false);
+const addTextModalOpen = ref(false);
 
 const sourceDetail = ref<GetSourceDetailResponse | null>(null);
 const isFilter = ref(false);
@@ -168,7 +208,6 @@ const { data: sources, refresh, pending } = await useAsyncData(() => getAllSourc
 function handleFilterSourceApplied(payload: FilterSourceResponse[]) {
   isFilter.value = true;
   filteredSources.value = payload;
-  console.log(payload);
 }
 
 function handleFilterSourceCleared() {
@@ -176,13 +215,15 @@ function handleFilterSourceCleared() {
   filteredSources.value = [];
 }
 
-async function handleUpdateSource(change: boolean) {
-  editModalOpen.value = false;
-  if (change) await refresh();
-}
+async function handleSourceChanged(change: boolean, modal: "add-text" | "edit" | "delete") {
+  if (modal === "add-text") {
+    addTextModalOpen.value = false;
+  } else if (modal === "edit") {
+    editModalOpen.value = false;
+  } else if (modal === "delete") {
+    deleteModalOpen.value = false;
+  }
 
-async function handleDeleteSource(change: boolean) {
-  deleteModalOpen.value = false;
   if (change) await refresh();
 }
 

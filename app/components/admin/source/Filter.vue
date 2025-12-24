@@ -1,5 +1,5 @@
 <template>
-  <VPopover>
+  <VPopover v-model:open="open">
     <VPopoverTrigger as-child>
       <VButton size="icon" variant="outline" class="relative">
         <FilterIcon />
@@ -19,6 +19,7 @@
           <VSelectValue placeholder="Select a group" />
         </VSelectTrigger>
         <VSelectContent>
+          <VSelectItem :value="null">All</VSelectItem>
           <VSelectItem v-for="group in selectableGroups" :value="group.id">
             {{ group.name }}
           </VSelectItem>
@@ -28,7 +29,17 @@
       <div class="mt-4">
         <div class="w-full flex items-center justify-between mb-2">
           <VLabel>Filter by Metadata</VLabel>
-          <div class="flex">
+          <div class="flex items-center gap-x-2">
+            <VTooltipProvider>
+              <VTooltip>
+                <VTooltipTrigger as-child>
+                  <CircleQuestionMarkIcon class="size-4 text-muted-foreground" />
+                </VTooltipTrigger>
+                <VTooltipContent>
+                  <p>for array operations, use comma separated values (ex: blue, red, green)</p>
+                </VTooltipContent>
+              </VTooltip>
+            </VTooltipProvider>
             <VButton @click="addMetadataFilter" size="sm" variant="secondary">+ Add</VButton>
           </div>
         </div>
@@ -63,11 +74,11 @@
 </template>
 
 <script setup lang="ts">
-import { FilterIcon, Trash2, XIcon } from "lucide-vue-next";
+import { CircleQuestionMarkIcon, FilterIcon, XIcon } from "lucide-vue-next";
 import { toast } from "vue-sonner";
 import type { GetAllGroupResponse } from "~/types/group/GetAllGroup";
 import type { FilterSourceResponse } from "~/types/source/FilterSource";
-import type { MetadataFilter } from "~/types/ui/MetadataFilter";
+import type { MetadataFilter, MetadataFilterOperator } from "~/types/ui/MetadataFilter";
 
 defineProps<{
   isFilter: boolean;
@@ -85,6 +96,8 @@ const selectableGroups = ref<GetAllGroupResponse[]>([]);
 const selectedGroup = ref<number | null>(null);
 const selectedFilters = ref<MetadataFilter[]>([]);
 
+const open = ref(false);
+
 const totalActiveFilter = computed(() => {
   let total = 0;
   if (selectedGroup.value != null) total++;
@@ -99,12 +112,16 @@ const availableFilters: { code: string; label: string }[] = [
   { code: "$gte", label: "greater than equal" },
   { code: "$lt", label: "lower than" },
   { code: "$lte", label: "lower than equal" },
+  { code: "$in", label: "in" },
+  { code: "$nin", label: "not in" },
 ];
 
-onMounted(async () => {
-  const res = await getAllGroup();
-  if (res.success && res.data) {
-    selectableGroups.value = res.data.items;
+watch(open, async (val) => {
+  if (val) {
+    const res = await getAllGroup();
+    if (res.success && res.data) {
+      selectableGroups.value = res.data.items;
+    }
   }
 });
 
@@ -127,12 +144,11 @@ function clearFilter() {
 }
 
 async function applyFilter() {
-  if (selectedGroup.value == null && selectedFilters.value.length == 0) return;
-
   const filter = selectedFilters.value.length > 0 ? filtersToObject(selectedFilters.value) : undefined;
+  const groupId = selectedGroup.value != null ? selectedGroup.value : undefined;
 
   const filterSourceHandler = useApi(filterSource);
-  const res = await filterSourceHandler(filter, selectedGroup.value != null ? selectedGroup.value : undefined);
+  const res = await filterSourceHandler(filter, groupId);
   if (res.success && res.data) {
     emits("applied", res.data);
   } else {
@@ -141,8 +157,18 @@ async function applyFilter() {
 }
 
 function filtersToObject(filters: MetadataFilter[]) {
+  function getObjectValue(
+    operator: MetadataFilterOperator,
+    value: string | number | boolean
+  ): string[] | string | number | boolean {
+    if (typeof value == "string" && (operator == "$in" || operator == "$nin")) {
+      return value.split(",");
+    }
+    return value;
+  }
+
   return filters.reduce<Record<string, Record<string, unknown>>>((acc, { name, operator, value }) => {
-    acc[name] = { [operator]: value };
+    acc[name] = { [operator]: getObjectValue(operator, value) };
     return acc;
   }, {});
 }

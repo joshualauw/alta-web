@@ -1,4 +1,5 @@
 import type { PagingResponse } from "~/types/PagingResponse";
+import type { CreateSourceRequest, CreateSourceResponse } from "~/types/source/CreateSource";
 import type { FilterSourceRequest, FilterSourceResponse } from "~/types/source/FilterSource";
 import type { GetAllSourceResponse } from "~/types/source/GetAllSource";
 import type { GetSourceDetailResponse } from "~/types/source/GetSourceDetail";
@@ -11,6 +12,13 @@ export default function () {
 
   function getSourceDetail(sourceId: number) {
     return fetcher<GetSourceDetailResponse>(`/api/source/getDetail/${sourceId}`);
+  }
+
+  function createSource(payload: CreateSourceRequest) {
+    return fetcher<CreateSourceResponse>(`/api/source/create`, {
+      method: "POST",
+      body: payload,
+    });
   }
 
   function filterSource(payload?: FilterSourceRequest, groupId?: number) {
@@ -37,6 +45,7 @@ export default function () {
   return {
     getAllSource,
     getSourceDetail,
+    createSource,
     filterSource,
     updateSource,
     deleteSource,

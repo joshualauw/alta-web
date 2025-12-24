@@ -15,7 +15,7 @@
                 </dt>
                 <dd class="text-sm font-medium text-foreground">
                   <div v-if="Array.isArray(value)" class="flex flex-wrap gap-1 mt-1">
-                    <VBadge v-for="tag in value" :key="tag" variant="secondary" class="text-[10px] px-1.5 py-0">
+                    <VBadge v-for="tag in value" :key="tag" variant="secondary" class="px-1.5 py-0">
                       {{ tag }}
                     </VBadge>
                   </div>

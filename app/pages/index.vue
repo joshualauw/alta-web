@@ -26,7 +26,7 @@
             </VFormItem>
           </VFormField>
           <VButton type="submit" class="w-full">
-            <LoaderIcon v-if="loading" class="mr-2 w-4 h-4" />
+            <Loader2Icon v-if="loading" class="mr-2 w-4 h-4 animate-spin" />
             Login
           </VButton>
         </form>
@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/zod";
-import { LoaderIcon } from "lucide-vue-next";
+import { Loader2Icon } from "lucide-vue-next";
 import { useForm } from "vee-validate";
 import { toast } from "vue-sonner";
 import { RouteKey } from "~/const/RouteKey";

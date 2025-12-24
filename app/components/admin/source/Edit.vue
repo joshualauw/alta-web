@@ -22,7 +22,7 @@
             <VSelect v-bind="componentField">
               <VFormControl>
                 <VSelectTrigger class="w-full">
-                  <VSelectValue placeholder="Select a fruit" />
+                  <VSelectValue placeholder="Select a group" />
                 </VSelectTrigger>
               </VFormControl>
               <VSelectContent>
@@ -38,7 +38,7 @@
 
         <VDialogFooter>
           <VButton type="submit">
-            <LoaderIcon v-if="loading" class="mr-2 w-4 h-4" />
+            <Loader2Icon v-if="loading" class="mr-2 w-4 h-4 animate-spin" />
             Submit
           </VButton>
         </VDialogFooter>
@@ -49,7 +49,7 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/zod";
-import { LoaderIcon } from "lucide-vue-next";
+import { Loader2Icon } from "lucide-vue-next";
 import { useForm } from "vee-validate";
 import { toast } from "vue-sonner";
 import type { GetAllGroupResponse } from "~/types/group/GetAllGroup";
@@ -87,13 +87,13 @@ watch(props, async (val) => {
     } else {
       form.setFieldValue("groupId", null);
     }
+  }
 
-    if (val.open) {
-      const getAllGroupHandler = useApi(getAllGroup);
-      const res = await getAllGroupHandler();
-      if (res.success && res.data) {
-        selectableGroups.value = res.data.items;
-      }
+  if (val.open) {
+    const getAllGroupHandler = useApi(getAllGroup);
+    const res = await getAllGroupHandler();
+    if (res.success && res.data) {
+      selectableGroups.value = res.data.items;
     }
   }
 });

@@ -35,7 +35,7 @@
         </div>
       </div>
       <VDialogFooter class="border-t pt-4">
-        <VButton variant="outline" size="sm" @click="handleCopy">
+        <VButton variant="ghost" size="sm" @click="handleCopy">
           <component :is="copied ? Check : Copy" class="mr-2 size-3.5" />
           {{ copied ? "Copied!" : "Copy Content" }}
         </VButton>

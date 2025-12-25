@@ -38,7 +38,7 @@
 
         <VDialogFooter>
           <VButton type="submit">
-            <Loader2Icon v-if="loading" class="mr-2 w-4 h-4 animate-spin" />
+            <Loader2 v-if="loading" class="mr-2 w-4 h-4 animate-spin" />
             Submit
           </VButton>
         </VDialogFooter>
@@ -49,7 +49,7 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/zod";
-import { Loader2Icon } from "lucide-vue-next";
+import { Loader2 } from "lucide-vue-next";
 import { useForm } from "vee-validate";
 import { toast } from "vue-sonner";
 import type { GetAllGroupResponse } from "~/types/group/GetAllGroup";
@@ -71,31 +71,29 @@ const { execute, loading, success, message } = useApiRef(updateSource);
 
 const selectableGroups = ref<GetAllGroupResponse[]>([]);
 
-const form = useForm({
-  validationSchema: toTypedSchema(updateSourceRequest),
-  initialValues: {
-    name: "",
-    groupId: undefined,
-  },
-});
-
 watch(props, async (val) => {
-  if (val.source) {
+  if (val.source && val.open) {
     form.setFieldValue("name", val.source.name);
     if (val.source.groupId) {
       form.setFieldValue("groupId", val.source.groupId);
     } else {
       form.setFieldValue("groupId", null);
     }
-  }
 
-  if (val.open) {
     const getAllGroupHandler = useApi(getAllGroup);
     const res = await getAllGroupHandler();
     if (res.success && res.data) {
       selectableGroups.value = res.data.items;
     }
   }
+});
+
+const form = useForm({
+  validationSchema: toTypedSchema(updateSourceRequest),
+  initialValues: {
+    name: "",
+    groupId: undefined,
+  },
 });
 
 const onSubmit = form.handleSubmit(async (values) => {

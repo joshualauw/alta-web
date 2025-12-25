@@ -70,7 +70,7 @@
           <VEmptyDescription> You haven't added any documents to your knowledge base yet </VEmptyDescription>
         </VEmptyHeader>
         <VEmptyContent>
-          <VButton class="gap-2">
+          <VButton @click="addTextModalOpen = true" class="gap-2">
             <Plus class="h-4 w-4" />
             Add your first source
           </VButton>

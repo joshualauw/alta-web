@@ -1,7 +1,7 @@
 import z from "zod";
 
 export const updateSourceRequest = z.object({
-  name: z.string().min(1).optional(),
+  name: z.string().min(1),
   groupId: z.number().nullable().optional(),
 });
 

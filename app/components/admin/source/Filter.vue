@@ -164,6 +164,9 @@ function filtersToObject(filters: MetadataFilter[]) {
     if (typeof value == "string" && (operator == "$in" || operator == "$nin")) {
       return value.split(",");
     }
+    if (typeof value == "string" && !isNaN(Number(value))) {
+      return Number(value);
+    }
     return value;
   }
 

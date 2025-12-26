@@ -8,6 +8,7 @@
         <p class="text-muted-foreground">Keep your documents organized</p>
       </div>
       <div class="flex items-center gap-2">
+        <div class="text-sm font-semibold mr-2">{{ groupCount }} Record(s)</div>
         <VButton variant="outline" size="icon" @click="refresh" :disabled="pending" title="Refresh sources">
           <RefreshCcw :class="['h-4 w-4', pending ? 'animate-spin' : '']" />
         </VButton>
@@ -113,7 +114,6 @@ import { Edit, MoreHorizontal, Plus, RefreshCcw, Tag, Trash2 } from "lucide-vue-
 import { RouteKey } from "~/const/RouteKey";
 import dayjs from "dayjs";
 import type { GetGroupDetailResponse } from "~/types/group/GetGroupDetail";
-import Admin from "~/layouts/admin.vue";
 
 definePageMeta({
   name: RouteKey.ADMIN_GROUP,
@@ -129,6 +129,8 @@ const addModalOpen = ref(false);
 
 const { getAllGroup, getGroupDetail } = useGroupStore();
 const { data: groups, pending, refresh } = await useAsyncData(() => getAllGroup());
+
+const groupCount = computed(() => (groups.value?.data?.items ?? []).length);
 
 async function handleGroupChanged(change: boolean, modal: "add" | "edit" | "delete") {
   if (modal === "add") {

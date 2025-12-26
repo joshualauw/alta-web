@@ -8,6 +8,7 @@
         <p class="text-muted-foreground">Manage your knowledge base documents</p>
       </div>
       <div class="flex items-center gap-2">
+        <div class="text-sm font-semibold mr-2">{{ totalRecords }} Record(s)</div>
         <AdminSourceFilter
           :is-filter="isFilter"
           @applied="handleFilterSourceApplied"
@@ -204,6 +205,11 @@ const filteredSources = ref<FilterSourceResponse[]>([]);
 
 const { getAllSource, getSourceDetail } = useSourceStore();
 const { data: sources, refresh, pending } = await useAsyncData(() => getAllSource());
+
+const totalRecords = computed(() => {
+  const list = isFilter.value ? filteredSources.value : sources.value?.data?.items ?? [];
+  return (list ?? []).length;
+});
 
 function handleFilterSourceApplied(payload: FilterSourceResponse[]) {
   isFilter.value = true;

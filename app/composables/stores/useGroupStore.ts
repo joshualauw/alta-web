@@ -1,4 +1,5 @@
 import type { CreateGroupRequest, CreateGroupResponse } from "~/types/group/CreateGroup";
+import type { DeleteGroupResponse } from "~/types/group/DeleteGroup";
 import type { GetAllGroupResponse } from "~/types/group/GetAllGroup";
 import type { GetGroupDetailResponse } from "~/types/group/GetGroupDetail";
 import type { UpdateGroupRequest, UpdateGroupResponse } from "~/types/group/UpdateGroup";
@@ -28,7 +29,7 @@ export default function () {
   }
 
   function deleteGroup(id: number) {
-    return fetcher<void>(`/api/group/delete/${id}`, {
+    return fetcher<DeleteGroupResponse>(`/api/group/delete/${id}`, {
       method: "DELETE",
     });
   }

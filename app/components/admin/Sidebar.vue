@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { ChevronUp, Database, LayoutDashboard, Settings2, Sparkles, Tag } from "lucide-vue-next";
+import { ChevronUp, Database, LayoutDashboard, Sliders, Sparkles, Tag } from "lucide-vue-next";
 import { RouteKey } from "~/const/RouteKey";
 
 const { logout, currentUser } = useUserStore();
@@ -68,7 +68,7 @@ const items = [
   {
     title: "Preset",
     name: RouteKey.ADMIN_PRESET,
-    icon: Settings2,
+    icon: Sliders,
   },
 ];
 </script>

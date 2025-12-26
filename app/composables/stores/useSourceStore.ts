@@ -14,10 +14,11 @@ export default function () {
     return fetcher<GetSourceDetailResponse>(`/api/source/getDetail/${sourceId}`);
   }
 
-  function createSource(payload: CreateSourceRequest) {
+  function createSource(payload: CreateSourceRequest, preset?: string) {
     return fetcher<CreateSourceResponse>(`/api/source/create`, {
       method: "POST",
       body: payload,
+      query: { preset },
     });
   }
 

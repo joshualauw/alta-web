@@ -1,21 +1,30 @@
 <template>
   <div class="space-y-6">
-    <div class="max-w-full flex justify-between items-center">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between max-w-full">
       <div>
         <div class="flex items-center gap-3">
-          <h1 class="text-2xl font-bold tracking-tight">Presets</h1>
+          <h1 class="text-xl md:text-2xl font-bold tracking-tight">Presets</h1>
         </div>
-        <p class="text-muted-foreground">Manage your AI generation presets</p>
+        <p class="text-sm md:text-base text-muted-foreground">Manage your AI generation presets</p>
       </div>
-      <div class="flex items-center gap-2">
-        <div class="text-sm font-semibold mr-2">{{ presetCards.length }} Record(s)</div>
-        <VButton variant="outline" size="icon" @click="refresh" :disabled="pending" title="Refresh presets">
-          <RefreshCcw :class="['h-4 w-4', pending ? 'animate-spin' : '']" />
-        </VButton>
-        <VButton @click="addModalOpen = true" class="bg-primary text-primary-foreground">
-          <Plus class="h-4 w-4" />
-          Add Preset
-        </VButton>
+
+      <div class="flex items-center justify-between sm:justify-end gap-2 border-t pt-4 sm:border-0 sm:pt-0">
+        <div class="text-sm text-muted-foreground font-semibold mr-2">{{ presetCards.length }} Record(s)</div>
+        <div class="flex items-center gap-2">
+          <VButton
+            variant="outline"
+            size="icon"
+            @click="refresh"
+            :disabled="pending"
+            title="Refresh presets"
+            class="shrink-0"
+          >
+            <RefreshCcw :class="['h-4 w-4', pending ? 'animate-spin' : '']" />
+          </VButton>
+          <VButton @click="addModalOpen = true" class="bg-primary text-primary-foreground whitespace-nowrap">
+            <Plus class="h-4 w-4" /> Add Preset
+          </VButton>
+        </div>
       </div>
     </div>
 

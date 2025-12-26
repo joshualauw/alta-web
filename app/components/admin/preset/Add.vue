@@ -1,6 +1,6 @@
 <template>
   <VDialog :open="open" @update:open="emits('close', false)">
-    <VDialogContent>
+    <VDialogContent class="lg:max-w-150">
       <form @submit="onSubmit">
         <VDialogHeader>
           <VDialogTitle>Add Preset</VDialogTitle>
@@ -145,6 +145,7 @@ const form = useForm({
     rerankModel: "",
     responsesModel: "",
   },
+  keepValuesOnUnmount: true,
 });
 
 const onSubmit = form.handleSubmit(async (values) => {

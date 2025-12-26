@@ -1,45 +1,56 @@
 <template>
   <div class="space-y-6">
-    <div class="max-w-full flex justify-between items-center">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between max-w-full">
       <div>
         <div class="flex items-center gap-3">
-          <h1 class="text-2xl font-bold tracking-tight">Sources</h1>
+          <h1 class="text-xl md:text-2xl font-bold tracking-tight">Sources</h1>
         </div>
-        <p class="text-muted-foreground">Manage your knowledge base documents</p>
+        <p class="text-sm md:text-base text-muted-foreground">Manage your knowledge base documents</p>
       </div>
-      <div class="flex items-center gap-2">
-        <div class="text-sm font-semibold mr-2">{{ sourceCards.length }} Record(s)</div>
-        <AdminSourceFilter
-          :is-filter="isFilter"
-          @applied="handleFilterSourceApplied"
-          @cleared="handleFilterSourceCleared"
-        />
-        <VButton variant="outline" size="icon" @click="refresh" :disabled="pending" title="Refresh sources">
-          <RefreshCcw :class="['h-4 w-4', pending ? 'animate-spin' : '']" />
-        </VButton>
 
-        <VDropdownMenu>
-          <VDropdownMenuTrigger as-child>
-            <VButton class="bg-primary text-primary-foreground">
-              <Plus class="h-4 w-4" />
-              Add Source
-            </VButton>
-          </VDropdownMenuTrigger>
-          <VDropdownMenuContent>
-            <VDropdownMenuItem @click="addTextModalOpen = true">
-              <FileText class="size-3.5" />
-              Add from text
-            </VDropdownMenuItem>
-            <VDropdownMenuItem disabled>
-              <FileUp class="size-3.5" />
-              Upload File (soon)
-            </VDropdownMenuItem>
-            <VDropdownMenuItem disabled>
-              <LayersPlus class="size-3.5" />
-              Bulk Create (soon)
-            </VDropdownMenuItem>
-          </VDropdownMenuContent>
-        </VDropdownMenu>
+      <div
+        class="flex items-center justify-between sm:justify-end gap-2 border-t pt-4 sm:border-0 sm:pt-0 w-full sm:w-auto"
+      >
+        <div class="text-sm text-muted-foreground font-semibold mr-2">{{ sourceCards.length }} Record(s)</div>
+        <div class="flex items-center gap-2">
+          <AdminSourceFilter
+            :is-filter="isFilter"
+            @applied="handleFilterSourceApplied"
+            @cleared="handleFilterSourceCleared"
+          />
+          <VButton
+            variant="outline"
+            size="icon"
+            @click="refresh"
+            :disabled="pending"
+            title="Refresh sources"
+            class="shrink-0"
+          >
+            <RefreshCcw :class="['h-4 w-4', pending ? 'animate-spin' : '']" />
+          </VButton>
+
+          <VDropdownMenu>
+            <VDropdownMenuTrigger as-child>
+              <VButton class="bg-primary text-primary-foreground whitespace-nowrap">
+                <Plus class="h-4 w-4" /> Add Source
+              </VButton>
+            </VDropdownMenuTrigger>
+            <VDropdownMenuContent>
+              <VDropdownMenuItem @click="addTextModalOpen = true">
+                <FileText class="size-3.5" />
+                Add from text
+              </VDropdownMenuItem>
+              <VDropdownMenuItem disabled>
+                <FileUp class="size-3.5" />
+                Upload File (soon)
+              </VDropdownMenuItem>
+              <VDropdownMenuItem disabled>
+                <LayersPlus class="size-3.5" />
+                Bulk Create (soon)
+              </VDropdownMenuItem>
+            </VDropdownMenuContent>
+          </VDropdownMenu>
+        </div>
       </div>
     </div>
 

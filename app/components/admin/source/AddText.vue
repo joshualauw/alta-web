@@ -1,6 +1,6 @@
 <template>
   <VDialog :open="open" @update:open="emits('close', false)">
-    <VDialogContent>
+    <VDialogContent class="lg:max-w-150">
       <form @submit="onSubmit">
         <VDialogHeader>
           <VDialogTitle>Add Source</VDialogTitle>
@@ -191,6 +191,7 @@ const form = useForm({
     name: "",
     content: "",
   },
+  keepValuesOnUnmount: true,
 });
 
 function addMetadataPayload() {

@@ -1,6 +1,6 @@
 <template>
   <VDialog :open="open" @update:open="emits('close', false)">
-    <VDialogContent v-if="preset">
+    <VDialogContent v-if="preset" class="lg:max-w-150">
       <form @submit="onSubmit" class="space-y-6">
         <VDialogHeader>
           <VDialogTitle>{{ preset.name }}</VDialogTitle>

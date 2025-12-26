@@ -21,7 +21,24 @@
             <VFormItem>
               <VFormLabel>Color</VFormLabel>
               <VFormControl>
-                <VInput type="color" class="py-0" placeholder="Color Code" v-bind="componentField" />
+                <div class="relative flex items-center">
+                  <div
+                    class="flex h-10 w-full items-center gap-2 rounded-md border border-input px-3 py-2 text-sm ring-offset-background"
+                  >
+                    <div
+                      class="h-4 w-4 shrink-0 rounded-full border border-black/10"
+                      :style="{ backgroundColor: componentField.modelValue }"
+                    />
+                    <span class="flex-1 text-muted-foreground font-mono">
+                      {{ componentField.modelValue || "#000000" }}
+                    </span>
+                    <input
+                      type="color"
+                      v-bind="componentField"
+                      class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    />
+                  </div>
+                </div>
               </VFormControl>
               <VFormMessage />
             </VFormItem>
@@ -63,6 +80,7 @@ const form = useForm({
     name: "",
     colorCode: "#000000",
   },
+  keepValuesOnUnmount: true,
 });
 
 const onSubmit = form.handleSubmit(async (values) => {

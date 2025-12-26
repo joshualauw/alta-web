@@ -1,3 +1,4 @@
+import type { PagingQuery } from "~/types/PagingQuery";
 import type { PagingResponse } from "~/types/PagingResponse";
 import type { CreatePresetRequest, CreatePresetResponse } from "~/types/preset/CreatePreset";
 import type { DeletePresetResponse } from "~/types/preset/DeletePreset";
@@ -6,8 +7,10 @@ import type { GetPresetDetailResponse } from "~/types/preset/GetPresetDetail";
 import type { UpdatePresetRequest, UpdatePresetResponse } from "~/types/preset/UpdatePreset";
 
 export default function () {
-  function getAllPreset() {
-    return fetcher<PagingResponse<GetAllPresetResponse>>("/api/preset/getAll");
+  function getAllPreset(paging?: PagingQuery) {
+    return fetcher<PagingResponse<GetAllPresetResponse>>("/api/preset/getAll", {
+      query: paging,
+    });
   }
 
   function getPresetDetail(id: number) {

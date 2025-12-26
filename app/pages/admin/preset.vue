@@ -8,7 +8,7 @@
         <p class="text-muted-foreground">Manage your AI generation presets</p>
       </div>
       <div class="flex items-center gap-2">
-        <div class="text-sm font-semibold mr-2">{{ presetCount }} Record(s)</div>
+        <div class="text-sm font-semibold mr-2">{{ presetCards.length }} Record(s)</div>
         <VButton variant="outline" size="icon" @click="refresh" :disabled="pending" title="Refresh presets">
           <RefreshCcw :class="['h-4 w-4', pending ? 'animate-spin' : '']" />
         </VButton>
@@ -20,7 +20,7 @@
     </div>
 
     <div
-      v-if="(presets?.data?.items ?? []).length === 0"
+      v-if="presetCards.length === 0"
       class="flex min-h-100 flex-col items-center justify-center rounded-md border border-dashed p-8 text-center animate-in fade-in zoom-in duration-300"
     >
       <VEmpty>
@@ -36,7 +36,7 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <div
-        v-for="preset in presets?.data?.items ?? []"
+        v-for="preset in presetCards"
         :key="preset.id"
         class="rounded-xl border bg-card p-5 hover:border-border/80 transition-colors duration-200"
       >
@@ -96,6 +96,27 @@
       </div>
     </div>
 
+    <div class="flex flex-col gap-6">
+      <VPagination
+        v-model:page="paging.page"
+        v-slot="{ page }"
+        :items-per-page="paging.size"
+        :total="presets?.data?.totalItems"
+        :default-page="1"
+      >
+        <VPaginationContent v-slot="{ items }">
+          <VPaginationPrevious />
+          <template v-for="(item, index) in items" :key="index">
+            <VPaginationItem v-if="item.type === 'page'" :value="item.value" :is-active="item.value === page">
+              {{ item.value }}
+            </VPaginationItem>
+          </template>
+          <VPaginationEllipsis :index="4" />
+          <VPaginationNext />
+        </VPaginationContent>
+      </VPagination>
+    </div>
+
     <AdminPresetAdd @close="handlePresetChanged($event, 'add')" :open="addModalOpen" />
     <AdminPresetEdit @close="handlePresetChanged($event, 'edit')" :open="editModalOpen" :preset="presetDetail" />
     <AdminPresetDelete @close="handlePresetChanged($event, 'delete')" :open="deleteModalOpen" :preset="presetDetail" />
@@ -114,10 +135,21 @@ definePageMeta({
   middleware: ["auth"],
 });
 
-const { getAllPreset, getPresetDetail } = usePresetStore();
-const { data: presets, pending, refresh } = await useAsyncData(() => getAllPreset());
+const paging = reactive({
+  page: 1,
+  size: 6,
+});
 
-const presetCount = computed(() => (presets.value?.data?.items ?? []).length);
+const { getAllPreset, getPresetDetail } = usePresetStore();
+const {
+  data: presets,
+  pending,
+  refresh,
+} = await useAsyncData(() => getAllPreset(paging), {
+  watch: [paging],
+});
+
+const presetCards = computed(() => presets.value?.data?.items ?? []);
 
 const addModalOpen = ref(false);
 const editModalOpen = ref(false);
@@ -135,14 +167,14 @@ async function handlePresetChanged(change: boolean, modal: "add" | "edit" | "del
 
   if (change) {
     await refresh();
+    paging.page = 1;
   }
 }
 
 async function handleGetPresetDetail(presetId: number, modal: "edit" | "delete") {
   const res = await getPresetDetail(presetId);
-  if (res && (res as any).data) {
-    // some store fetchers return { success, data } while others return the data directly
-    presetDetail.value = (res as any).data ?? res;
+  if (res.success && res.data) {
+    presetDetail.value = res.data;
 
     if (modal === "edit") {
       editModalOpen.value = true;

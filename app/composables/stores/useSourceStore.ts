@@ -1,3 +1,4 @@
+import type { PagingQuery } from "~/types/PagingQuery";
 import type { PagingResponse } from "~/types/PagingResponse";
 import type { CreateSourceRequest, CreateSourceResponse } from "~/types/source/CreateSource";
 import type { FilterSourceRequest, FilterSourceResponse } from "~/types/source/FilterSource";
@@ -6,8 +7,10 @@ import type { GetSourceDetailResponse } from "~/types/source/GetSourceDetail";
 import type { UpdateSourceRequest, UpdateSourceResponse } from "~/types/source/UpdateSource";
 
 export default function () {
-  function getAllSource() {
-    return fetcher<PagingResponse<GetAllSourceResponse>>("/api/source/getAll");
+  function getAllSource(paging?: PagingQuery) {
+    return fetcher<PagingResponse<GetAllSourceResponse>>("/api/source/getAll", {
+      query: paging,
+    });
   }
 
   function getSourceDetail(sourceId: number) {

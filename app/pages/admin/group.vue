@@ -8,7 +8,7 @@
         <p class="text-muted-foreground">Keep your documents organized</p>
       </div>
       <div class="flex items-center gap-2">
-        <div class="text-sm font-semibold mr-2">{{ groupCount }} Record(s)</div>
+        <div class="text-sm font-semibold mr-2">{{ groupCards.length }} Record(s)</div>
         <VButton variant="outline" size="icon" @click="refresh" :disabled="pending" title="Refresh sources">
           <RefreshCcw :class="['h-4 w-4', pending ? 'animate-spin' : '']" />
         </VButton>
@@ -20,7 +20,7 @@
     </div>
 
     <div
-      v-if="(groups?.data?.items ?? []).length === 0"
+      v-if="groupCards.length === 0"
       class="flex min-h-100 flex-col items-center justify-center rounded-md border border-dashed p-8 text-center animate-in fade-in zoom-in duration-300"
     >
       <VEmpty>
@@ -42,7 +42,7 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <div
-        v-for="group in groups?.data?.items ?? []"
+        v-for="group in groupCards"
         :key="group.id"
         class="rounded-xl border bg-card p-5 hover:border-border/80 transition-colors duration-200"
       >
@@ -103,6 +103,27 @@
       </div>
     </div>
 
+    <div class="flex flex-col gap-6">
+      <VPagination
+        v-model:page="paging.page"
+        v-slot="{ page }"
+        :items-per-page="paging.size"
+        :total="groups?.data?.totalItems"
+        :default-page="1"
+      >
+        <VPaginationContent v-slot="{ items }">
+          <VPaginationPrevious />
+          <template v-for="(item, index) in items" :key="index">
+            <VPaginationItem v-if="item.type === 'page'" :value="item.value" :is-active="item.value === page">
+              {{ item.value }}
+            </VPaginationItem>
+          </template>
+          <VPaginationEllipsis :index="4" />
+          <VPaginationNext />
+        </VPaginationContent>
+      </VPagination>
+    </div>
+
     <AdminGroupAdd @close="handleGroupChanged($event, 'add')" :open="addModalOpen" />
     <AdminGroupEdit @close="handleGroupChanged($event, 'edit')" :open="editModalOpen" :group="groupDetail" />
     <AdminGroupDelete @close="handleGroupChanged($event, 'delete')" :open="deleteModalOpen" :group="groupDetail" />
@@ -127,10 +148,21 @@ const editModalOpen = ref(false);
 const deleteModalOpen = ref(false);
 const addModalOpen = ref(false);
 
-const { getAllGroup, getGroupDetail } = useGroupStore();
-const { data: groups, pending, refresh } = await useAsyncData(() => getAllGroup());
+const paging = reactive({
+  page: 1,
+  size: 6,
+});
 
-const groupCount = computed(() => (groups.value?.data?.items ?? []).length);
+const { getAllGroup, getGroupDetail } = useGroupStore();
+const {
+  data: groups,
+  pending,
+  refresh,
+} = await useAsyncData(() => getAllGroup(paging), {
+  watch: [paging],
+});
+
+const groupCards = computed(() => groups.value?.data?.items ?? []);
 
 async function handleGroupChanged(change: boolean, modal: "add" | "edit" | "delete") {
   if (modal === "add") {
@@ -143,6 +175,7 @@ async function handleGroupChanged(change: boolean, modal: "add" | "edit" | "dele
 
   if (change) {
     await refresh();
+    paging.page = 1;
   }
 }
 

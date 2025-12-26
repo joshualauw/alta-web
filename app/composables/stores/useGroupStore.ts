@@ -3,11 +3,14 @@ import type { DeleteGroupResponse } from "~/types/group/DeleteGroup";
 import type { GetAllGroupResponse } from "~/types/group/GetAllGroup";
 import type { GetGroupDetailResponse } from "~/types/group/GetGroupDetail";
 import type { UpdateGroupRequest, UpdateGroupResponse } from "~/types/group/UpdateGroup";
+import type { PagingQuery } from "~/types/PagingQuery";
 import type { PagingResponse } from "~/types/PagingResponse";
 
 export default function () {
-  function getAllGroup() {
-    return fetcher<PagingResponse<GetAllGroupResponse>>("/api/group/getAll");
+  function getAllGroup(paging?: PagingQuery) {
+    return fetcher<PagingResponse<GetAllGroupResponse>>("/api/group/getAll", {
+      query: paging,
+    });
   }
 
   function getGroupDetail(id: number) {

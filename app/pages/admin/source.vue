@@ -8,7 +8,7 @@
         <p class="text-muted-foreground">Manage your knowledge base documents</p>
       </div>
       <div class="flex items-center gap-2">
-        <div class="text-sm font-semibold mr-2">{{ totalRecords }} Record(s)</div>
+        <div class="text-sm font-semibold mr-2">{{ sourceCards.length }} Record(s)</div>
         <AdminSourceFilter
           :is-filter="isFilter"
           @applied="handleFilterSourceApplied"
@@ -44,7 +44,7 @@
     </div>
 
     <div
-      v-if="isFilter && filteredSources.length == 0"
+      v-if="isFilter && sourceCards.length === 0"
       class="flex min-h-100 flex-col items-center justify-center rounded-md border border-dashed p-8 text-center animate-in fade-in zoom-in duration-300"
     >
       <VEmpty>
@@ -59,7 +59,7 @@
     </div>
 
     <div
-      v-if="(sources?.data?.items ?? []).length === 0"
+      v-if="sourceCards.length === 0"
       class="flex min-h-100 flex-col items-center justify-center rounded-md border border-dashed p-8 text-center animate-in fade-in zoom-in duration-300"
     >
       <VEmpty>
@@ -81,7 +81,7 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <div
-        v-for="source in (filteredSources.length > 0 || isFilter ? filteredSources : sources?.data?.items) ?? []"
+        v-for="source in sourceCards"
         :key="source.id"
         class="rounded-xl border bg-card p-5 hover:border-border/80 transition-colors duration-200"
       >
@@ -162,6 +162,27 @@
       </div>
     </div>
 
+    <div v-if="!isFilter" class="flex flex-col gap-6">
+      <VPagination
+        v-model:page="paging.page"
+        v-slot="{ page }"
+        :items-per-page="paging.size"
+        :total="sources?.data?.totalItems"
+        :default-page="1"
+      >
+        <VPaginationContent v-slot="{ items }">
+          <VPaginationPrevious />
+          <template v-for="(item, index) in items" :key="index">
+            <VPaginationItem v-if="item.type === 'page'" :value="item.value" :is-active="item.value === page">
+              {{ item.value }}
+            </VPaginationItem>
+          </template>
+          <VPaginationEllipsis :index="4" />
+          <VPaginationNext />
+        </VPaginationContent>
+      </VPagination>
+    </div>
+
     <AdminSourceDetail @close="detailModalOpen = false" :open="detailModalOpen" :source="sourceDetail" />
     <AdminSourceAddText @close="handleSourceChanged($event, 'add-text')" :open="addTextModalOpen" />
     <AdminSourceEdit @close="handleSourceChanged($event, 'edit')" :open="editModalOpen" :source="sourceDetail" />
@@ -203,12 +224,26 @@ const sourceDetail = ref<GetSourceDetailResponse | null>(null);
 const isFilter = ref(false);
 const filteredSources = ref<FilterSourceResponse[]>([]);
 
-const { getAllSource, getSourceDetail } = useSourceStore();
-const { data: sources, refresh, pending } = await useAsyncData(() => getAllSource());
+const paging = reactive({
+  page: 1,
+  size: 6,
+});
 
-const totalRecords = computed(() => {
-  const list = isFilter.value ? filteredSources.value : sources.value?.data?.items ?? [];
-  return (list ?? []).length;
+const { getAllSource, getSourceDetail } = useSourceStore();
+const {
+  data: sources,
+  refresh,
+  pending,
+} = await useAsyncData(() => getAllSource(paging), {
+  watch: [paging],
+});
+
+const sourceCards = computed(() => {
+  if (isFilter.value) {
+    return filteredSources.value;
+  } else {
+    return sources.value?.data?.items ?? [];
+  }
 });
 
 function handleFilterSourceApplied(payload: FilterSourceResponse[]) {
@@ -236,6 +271,7 @@ async function handleSourceChanged(change: boolean, modal: "add-text" | "edit" |
       filteredSources.value = [];
     }
     await refresh();
+    paging.page = 1;
   }
 }
 

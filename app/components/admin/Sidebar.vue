@@ -51,8 +51,8 @@ const items = [
     icon: LayoutDashboard,
   },
   {
-    title: "Ask",
-    name: RouteKey.ADMIN_ASK,
+    title: "Search",
+    name: RouteKey.ADMIN_SEARCH,
     icon: Sparkles,
   },
   {

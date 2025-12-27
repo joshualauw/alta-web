@@ -3,6 +3,7 @@ import type { PagingResponse } from "~/types/PagingResponse";
 import type { CreateSourceRequest, CreateSourceResponse } from "~/types/source/CreateSource";
 import type { FilterSourceRequest, FilterSourceResponse } from "~/types/source/FilterSource";
 import type { GetAllSourceResponse } from "~/types/source/GetAllSource";
+import type { GetSearchLogResponse } from "~/types/source/GetSearchLog";
 import type { GetSourceDetailResponse } from "~/types/source/GetSourceDetail";
 import type { SearchSourceQuery, SearchSourceRequest, SearchSourceResponse } from "~/types/source/SearchSource";
 import type { UpdateSourceRequest, UpdateSourceResponse } from "~/types/source/UpdateSource";
@@ -23,6 +24,12 @@ export default function () {
       method: "POST",
       body: payload,
       query,
+    });
+  }
+
+  function getSearchLog(paging?: PagingQuery) {
+    return fetcher<PagingResponse<GetSearchLogResponse>>(`/api/source/search/log`, {
+      query: paging,
     });
   }
 
@@ -58,6 +65,7 @@ export default function () {
   return {
     getAllSource,
     getSourceDetail,
+    getSearchLog,
     searchSource,
     createSource,
     filterSource,

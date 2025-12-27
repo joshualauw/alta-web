@@ -3,9 +3,15 @@
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between max-w-full">
       <div>
         <div class="flex items-center gap-3">
-          <h1 class="text-xl md:text-2xl font-bold tracking-tight">Ask</h1>
+          <h1 class="text-xl md:text-2xl font-bold tracking-tight">Search</h1>
         </div>
         <p class="text-sm md:text-base text-muted-foreground">Chat with your documents</p>
+      </div>
+
+      <div class="flex items-center justify-between sm:justify-end gap-2 border-t pt-4 sm:border-0 sm:pt-0">
+        <VButton @click="searchLogModalOpen = true" class="bg-primary text-primary-foreground whitespace-nowrap">
+          <MessageCircleMore class="h-4 w-4" /> Chat Log
+        </VButton>
       </div>
     </div>
 
@@ -216,11 +222,13 @@
         </div>
       </div>
     </div>
+
+    <AdminSearchLog :open="searchLogModalOpen" @close="searchLogModalOpen = false" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { Send, Filter, FileText, FileQuestion, Loader2, Info } from "lucide-vue-next";
+import { Send, Filter, FileText, FileQuestion, Loader2, Info, MessageCircleMore } from "lucide-vue-next";
 import type { GetAllPresetResponse } from "~/types/preset/GetAllPreset";
 import { RouteKey } from "~/const/RouteKey";
 import type { FilterSourceResponse } from "~/types/source/FilterSource";
@@ -230,12 +238,13 @@ import { toast } from "vue-sonner";
 import type { SourceChat } from "~/types/ui/SourceChat";
 
 definePageMeta({
-  name: RouteKey.ADMIN_ASK,
+  name: RouteKey.ADMIN_SEARCH,
   layout: "admin",
   middleware: ["auth"],
 });
 
 const isFilter = ref(false);
+const searchLogModalOpen = ref(false);
 const filteredSources = ref<FilterSourceResponse[]>([]);
 const selectedSources = ref<number[]>([]);
 const question = ref("");

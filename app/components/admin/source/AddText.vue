@@ -45,11 +45,11 @@
             </VFormItem>
           </VFormField>
 
-          <VFormField v-slot="{ componentField }" name="presetId">
+          <VFormField name="presetId">
             <VFormItem>
               <VFormLabel>Preset</VFormLabel>
               <div class="flex items-center gap-2">
-                <VSelect v-bind="componentField" v-model="selectedPreset">
+                <VSelect v-model="selectedPreset">
                   <VFormControl>
                     <VSelectTrigger class="w-full">
                       <VSelectValue placeholder="Select a preset" />
@@ -82,7 +82,6 @@
                   </VPopoverContent>
                 </VPopover>
               </div>
-              <VFormMessage />
             </VFormItem>
           </VFormField>
 

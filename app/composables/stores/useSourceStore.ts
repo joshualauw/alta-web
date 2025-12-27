@@ -4,6 +4,7 @@ import type { CreateSourceRequest, CreateSourceResponse } from "~/types/source/C
 import type { FilterSourceRequest, FilterSourceResponse } from "~/types/source/FilterSource";
 import type { GetAllSourceResponse } from "~/types/source/GetAllSource";
 import type { GetSourceDetailResponse } from "~/types/source/GetSourceDetail";
+import type { SearchSourceQuery, SearchSourceRequest, SearchSourceResponse } from "~/types/source/SearchSource";
 import type { UpdateSourceRequest, UpdateSourceResponse } from "~/types/source/UpdateSource";
 
 export default function () {
@@ -15,6 +16,14 @@ export default function () {
 
   function getSourceDetail(sourceId: number) {
     return fetcher<GetSourceDetailResponse>(`/api/source/getDetail/${sourceId}`);
+  }
+
+  function searchSource(payload: SearchSourceRequest, query?: SearchSourceQuery) {
+    return fetcher<SearchSourceResponse>(`/api/source/search`, {
+      method: "POST",
+      body: payload,
+      query,
+    });
   }
 
   function createSource(payload: CreateSourceRequest, preset?: string) {
@@ -49,6 +58,7 @@ export default function () {
   return {
     getAllSource,
     getSourceDetail,
+    searchSource,
     createSource,
     filterSource,
     updateSource,

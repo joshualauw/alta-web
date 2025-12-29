@@ -56,9 +56,9 @@
           <div
             v-for="source in filteredSources"
             :key="source.id"
-            class="p-3 rounded-lg border transition-colors cursor-pointer flex items-start gap-2"
+            class="p-4 rounded-lg border transition-colors cursor-pointer flex items-start gap-2"
             :class="{
-              'ring-2 ring-primary/30 bg-primary/5': isSelected(source.id),
+              'ring ring-primary/30 bg-primary/5': isSelected(source.id),
             }"
             @click="toggleSelect(source.id)"
           >

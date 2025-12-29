@@ -1,8 +1,8 @@
 <template>
   <div class="flex items-center justify-center min-h-screen w-full bg-background p-4">
     <VCard class="w-full max-w-md">
-      <VCardHeader>
-        <VCardTitle class="text-2xl">Login</VCardTitle>
+      <VCardHeader class="text-center">
+        <VCardTitle class="text-2xl font-bold">Login to Alta</VCardTitle>
         <VCardDescription> Enter your email below to login to your account.</VCardDescription>
       </VCardHeader>
       <VCardContent>

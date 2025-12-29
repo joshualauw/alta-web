@@ -1,75 +1,13 @@
-# Nuxt Minimal Starter
+# Alta Web
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Admin dashboard to manage RAG based on [Alta](https://github.com/joshualauw/alta-web.git)
 
-## Setup
+## Screenshots
 
-Make sure to install dependencies:
-
-```bash
-# npm
-npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+![Sources](demo/2.png)
+![Source Detail](demo/3.png)
+![Search](demo/6.png)
+![Search Log](demo/7.png)
+![Groups](demo/5.png)
+![Presets](demo/4.png)
+![Preset Detail](demo/8.png)
